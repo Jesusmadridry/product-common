@@ -72,7 +72,7 @@ jobs:
         type: 'maven'
         keep: 10
         version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
-        token: 
+        token:
         names: |
           mch-commons-api.mch-common-test
           mch-commons-api.mch-common-utils
