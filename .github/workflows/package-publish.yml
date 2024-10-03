@@ -1,0 +1,147 @@
+# This workflow will build and push a new container image to Amazon ECR,
+# and then will deploy a new task definition to Amazon ECS, when there is a push to the "master" branch.
+#
+# To use this workflow, you will need to complete the following set-up steps:
+#
+# 1. Create an ECR repository to store your images.
+#    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`.
+#    Replace the value of the `ECR_REPOSITORY` environment variable in the workflow below with your repository's name.
+#    Replace the value of the `AWS_REGION` environment variable in the workflow below with your repository's region.
+#
+# 2. Create an ECS task definition, an ECS cluster, and an ECS service.
+#    For example, follow the Getting Started guide on the ECS console:
+#      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun
+#    Replace the value of the `ECS_SERVICE` environment variable in the workflow below with the name you set for the Amazon ECS service.
+#    Replace the value of the `ECS_CLUSTER` environment variable in the workflow below with the name you set for the cluster.
+#
+# 3. Store your ECS task definition as a JSON file in your repository.
+#    The format should follow the output of `aws ecs register-task-definition --generate-cli-skeleton`.
+#    Replace the value of the `ECS_TASK_DEFINITION` environment variable in the workflow below with the path to the JSON file.
+#    Replace the value of the `CONTAINER_NAME` environment variable in the workflow below with the name of the container
+#    in the `containerDefinitions` section of the task definition.
+#
+# 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
+#    and best practices on handling the access key credentials.
+
+name: Publishing Artifacts
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+env:
+  ORG_GRADLE_PROJECT_jarType: ""
+  ORG_GRADLE_PROJECT_gpr_user: jesusmadridry@gmail.com
+  ORG_GRADLE_PROJECT_gpr_key:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        distribution: corretto
+        java-version: 17
+
+    - name: Retrieving App Version & Pattern
+      uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: wrapper
+        arguments: scapedVersionTxt versionTxt
+
+    - name: Register Version Pattern
+      id: config-artifact
+      run: |
+        echo "VERSION_PATTERN=$(cat version-pattern.txt)" >> "$GITHUB_ENV"
+        echo "PROJECT_TAG=$(cat version.txt)" >> "$GITHUB_ENV"
+        echo "App version = $(cat version.txt)"
+
+    - name: Removing Previous Packages
+      uses: smartsquaregmbh/delete-old-packages@v0.8.0
+      with:
+        type: 'maven'
+        keep: 10
+        version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
+        token: 
+        names: |
+          mch-commons-api.mch-common-test
+          mch-commons-api.mch-common-utils
+          mch-commons-api.mch-common-event
+          mch-commons-api.mch-common-web
+          mch-commons-api.mch-common-api-core
+          mch-commons-api.mch-common-api-reactive
+          mch-commons-api.mch-common-api-webmvc
+
+    - uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: wrapper
+        arguments: build publish
+
+    - name: Verbose context
+      id: verbose-env
+      run: |
+        env
+        echo "GITHUB_USERNAME: $GITHUB_USERNAME"
+        echo "GITHUB_TOKEN: $GITHUB_TOKEN"
+
+    - name: Store Build Failure Reports
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: reports
+        path: |
+          **/build/reports/
+          **/build/test-results/
+          **/build/jacocoHtml/
+
+    - name: Store Last Coverage Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: last-coverage
+        path: |
+          **/build/jacocoHtml/
+
+    - name: Tagging Release and documentation
+      id: tag-release
+      run: |
+        MESSAGE_TAG=$(git log --pretty=format:'%s - DEV: %an' -1)
+        VERSION=$(cat version.txt)
+        TAG_DATE=$(TD="America/New_York" date +"%y%m%d%H%M")
+        GIT_TAG=$VERSION-$TAG_DATE
+        
+        HASH=$(git log --pretty=format:"%h" -1)
+        HASH_URL=https://github.com/$GITHUB_REPOSITORY/commit/$HASH
+        
+        DEPLOY_DATE=$(TZ="America/New_York" date +"%D %R")
+
+        BRANCH_NAME=$(git log --pretty=format:"%s" -1)
+        JIRA_TASK=${BRANCH_NAME:4:5}
+        JIRA_URL=https://mchomes.atlassian.net/browse/ENG-$JIRA_TASK
+        DEV=$(git log --pretty=format:"%an" -1)
+        
+        # Push Tag to GIT
+        git config --global user.name $GITHUB_ACTOR
+        git config --global user.email "admin@mycommunity.homes"
+        git tag $GIT_TAG -am "$PROJECT_TAG : $MESSAGE_TAG - ACTOR: $GITHUB_ACTOR"
+        git push origin --tags
+        
+        # Update release documentation
+        NEW_ROW="| [$VERSION]($HASH_URL) | $HASH | $DEPLOY_DATE | [$BRANCH_NAME]($JIRA_URL) | $DEV | $GITHUB_ACTOR |"
+        
+        # echo "$NEW_ROW" >> releases.md
+        sed -i -u '5i'"$NEW_ROW" releases.md
+        
+        git add releases.md
+        git add coverage-limit.properties
+        git commit -m "Update Releases Document and Coverage Metrics"
+        git push
