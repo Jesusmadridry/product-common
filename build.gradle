@@ -1,0 +1,163 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+buildscript {
+    apply from: 'versions.gradle'
+    repositories {
+        maven {
+            name = "GitHubPlugins"
+            url = uri("https://maven.pkg.github.com/mycommunityhomes/code_coverage")
+            credentials {
+                username = project.findProperty("gpr_user")
+                password = project.findProperty("gpr_key")
+            }
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        //https://github.com/nebula-plugins/gradle-aggregate-javadocs-plugin
+        classpath "com.netflix.nebula:gradle-aggregate-javadocs-plugin:${nebulaJavadocsPluginVersion}"
+    }
+}
+
+apply plugin: 'nebula-aggregate-javadocs'
+
+project.rootProject.gradle.projectsEvaluated {
+    aggregateJavadocs {
+        title "$project.name $jarVersion APP All Modules"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+//COVERAGE PERSISTENCY CONFIGURATION
+ext {
+    coveragePropertyFile = file("${projectDir}/coverage-limit.properties")  // main coverage database
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
+
+    //COVERAGE PERSISTENCY CONFIGURATION
+    group = 'product-common-api'
+    version = "$jarVersion"
+    println "group: ${project.group}"
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    javadoc {
+        failOnError false
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        /* **********  TEST DEPENDENCIES ****************** */
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'io.projectreactor:reactor-test'
+        testImplementation ("com.squareup.okhttp3:mockwebserver:${mockWebserverVersion}") {
+            exclude group: "junit", module: "junit"
+        }
+
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
+    }
+
+    task allDeps(type: DependencyReportTask)
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+
+    task sourceJar(type: Jar, dependsOn: classes) {
+        archiveClassifier = "sources"
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives sourceJar
+    }
+
+    /*
+    Use
+     ./gradlew clean build publishToMavenLocal
+     To locally publish any  module artifact as dependency into your local maven repository (<user-home-folder>/.m2/repository)
+     */
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/jesusmadridry/product-common")
+                credentials {
+                    username = project.findProperty("gpr_user_git")
+                    password = project.findProperty("gpr_key_git")
+                }
+            }
+        }
+        publications {
+            mavenJava(MavenPublication) {
+                from(components.java)
+                artifact sourceJar
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+            }
+        }
+    }
+    task scapedVersionTxt()  {
+        doLast {
+            new File(rootDir, "version-pattern.txt").text = "$jarNumber".replaceAll("\\.","\\\\.")
+        }
+    }
+    task versionTxt()  {
+        doLast {
+            new File(rootDir, "version.txt").text = "$jarVersion"
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+
+}
+
+
+
+
+
