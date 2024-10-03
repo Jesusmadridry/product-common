@@ -37,8 +37,8 @@ permissions:
 
 env:
   ORG_GRADLE_PROJECT_jarType: ""
-  ORG_GRADLE_PROJECT_gpr_user: jesusmadridry@gmail.com
-  ORG_GRADLE_PROJECT_gpr_key:
+  ORG_GRADLE_PROJECT_gpr_user: ${{ secrets.COMMON_GITHUB_USERNAME }}
+  ORG_GRADLE_PROJECT_gpr_key: ${{ secrets.COMMON_GITHUB_TOKEN }}
 
 jobs:
   deploy:
@@ -72,15 +72,9 @@ jobs:
         type: 'maven'
         keep: 10
         version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
-        token:
+        token: ${{ secrets.COMMON_GITHUB_TOKEN }}
         names: |
-          mch-commons-api.mch-common-test
-          mch-commons-api.mch-common-utils
-          mch-commons-api.mch-common-event
-          mch-commons-api.mch-common-web
-          mch-commons-api.mch-common-api-core
-          mch-commons-api.mch-common-api-reactive
-          mch-commons-api.mch-common-api-webmvc
+          product-common-api.product-common-persist
 
     - uses: gradle/gradle-build-action@v2
       with:
@@ -102,7 +96,6 @@ jobs:
         path: |
           **/build/reports/
           **/build/test-results/
-          **/build/jacocoHtml/
 
     - name: Store Last Coverage Reports
       uses: actions/upload-artifact@v3

@@ -2,14 +2,6 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 buildscript {
     apply from: 'versions.gradle'
     repositories {
-        maven {
-            name = "GitHubPlugins"
-            url = uri("https://maven.pkg.github.com/mycommunityhomes/code_coverage")
-            credentials {
-                username = project.findProperty("gpr_user")
-                password = project.findProperty("gpr_key")
-            }
-        }
         mavenCentral()
     }
     dependencies {
@@ -32,11 +24,6 @@ allprojects {
         mavenLocal()
         mavenCentral()
     }
-}
-
-//COVERAGE PERSISTENCY CONFIGURATION
-ext {
-    coveragePropertyFile = file("${projectDir}/coverage-limit.properties")  // main coverage database
 }
 
 subprojects {
