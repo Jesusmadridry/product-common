@@ -20,6 +20,6 @@ public abstract class CommonEntity {
     protected LocalDateTime createdDateTs;
     protected String createdByUser;
     @UpdateTimestamp
-    protected LocalDateTime updatedDateTs;
+    protected LocalDateTime modifiedDateTs;
     protected String modifiedByUser;
 }
