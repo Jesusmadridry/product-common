@@ -1,0 +1,24 @@
+application:
+  title: Persist Integration [TEST]
+
+logging:
+  level:
+    com.mch: DEBUG
+    mch.acquisition: DEBUG
+    reactor.netty.http: DEBUG
+    io.netty.resolver.dns: DEBUG
+    org.springframework.security: TRACE
+
+spring:
+  sql:
+    init:
+      continue-on-error: false
+  datasource:
+    url: jdbc:h2:mem:mch_test;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    embedded-database-connection: h2
+  jpa:
+    hibernate:
+      ddl-auto: create

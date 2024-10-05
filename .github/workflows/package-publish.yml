@@ -75,6 +75,7 @@ jobs:
         token: ${{ secrets.COMMON_GITHUB_TOKEN }}
         names: |
           product-common-api.product-common-persist
+          product-common-api.product-common-exception
 
     - uses: gradle/gradle-build-action@v2
       with:
