@@ -104,7 +104,7 @@ subprojects {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/jesusmadridry/product-common")
                 credentials {
-                    username = System.getenv("ORG_GRADLE_PROJECT_gpr_user_git")
+                    username = jesusmadridry
                     password = System.getenv("ORG_GRADLE_PROJECT_gpr_key_git")
                 }
             }

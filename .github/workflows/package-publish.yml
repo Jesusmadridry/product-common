@@ -13,6 +13,7 @@ env:
   ORG_GRADLE_PROJECT_jarType: ""
   ORG_GRADLE_PROJECT_gpr_user: ${{ secrets.COMMON_GITHUB_USERNAME }}
   ORG_GRADLE_PROJECT_gpr_key: ${{ secrets.COMMON_GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.COMMON_GITHUB_TOKEN }}
 
 jobs:
   deploy:
