@@ -18,16 +18,14 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    environment: production
+
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-java@v3
       with:
         distribution: corretto
         java-version: 17
-
-    - name: Defining Vars
-      with:
-
 
     - name: Retrieving App Version & Pattern
       uses: gradle/gradle-build-action@v2
@@ -42,16 +40,17 @@ jobs:
         echo "PROJECT_TAG=$(cat version.txt)" >> "$GITHUB_ENV"
         echo "App version = $(cat version.txt)"
 
-#    - name: Removing Previous Packages
-#      uses: smartsquaregmbh/delete-old-packages@v0.8.0
-#      with:
-#        type: 'maven'
-#        keep: 10
-#        version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
-#        token: ${{ secrets.COMMON_GITHUB_TOKEN }}
-#        names: |
-#          product-common-api.product-common-persist
-#          product-common-api.product-common-exception
+    - name: Removing Previous Packages
+      uses: smartsquaregmbh/delete-old-packages@v0.8.0
+      with:
+        type: 'maven'
+        username: jesusmadridry@gmail.com
+        keep: 10
+        version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
+        token: ${{ secrets.COMMON_GITHUB_TOKEN }}
+        names: |
+          product-common-api.product-common-persist
+          product-common-api.product-common-exception
 
     - uses: gradle/gradle-build-action@v2
       with:
@@ -62,8 +61,24 @@ jobs:
       id: verbose-env
       run: |
         env
-        echo "GITHUB_USERNAME: ${{ secrets.COMMON_GITHUB_USERNAME }}"
-        echo "GITHUB_TOKEN: ${{ secrets.COMMON_GITHUB_TOKEN }}"
+        echo "GITHUB_USERNAME: $GITHUB_USERNAME"
+        echo "GITHUB_TOKEN: $GITHUB_TOKEN"
+
+    - name: Store Build Failure Reports
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: reports
+        path: |
+          **/build/reports/
+          **/build/test-results/
+
+    - name: Store Last Coverage Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: last-coverage
+        path: |
+          **/build/jacocoHtml/
 
     - name: Tagging Release and documentation
       id: tag-release
