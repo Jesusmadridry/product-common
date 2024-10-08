@@ -106,24 +106,24 @@ subprojects {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/jesusmadridry/product-common")
                 credentials {
-                    username = project.findProperty("gpr_user_git")
-                    password = project.findProperty("gpr_key_git")
+                    username = System.getenv("gpr_user_git")
+                    password = System.getenv("gpr_key_git")
                 }
             }
         }
-        publications {
-            mavenJava(MavenPublication) {
-                from(components.java)
-                artifact sourceJar
-                versionMapping {
-                    usage('java-api') {
-                        fromResolutionOf('runtimeClasspath')
-                    }
-                    usage('java-runtime') {
-                        fromResolutionResult()
-                    }
-                }
-            }
+//        publications {
+//            mavenJava(MavenPublication) {
+//                from(components.java)
+//                artifact sourceJar
+//                versionMapping {
+//                    usage('java-api') {
+//                        fromResolutionOf('runtimeClasspath')
+//                    }
+//                    usage('java-runtime') {
+//                        fromResolutionResult()
+//                    }
+//                }
+//            }
         }
     }
     task scapedVersionTxt()  {
