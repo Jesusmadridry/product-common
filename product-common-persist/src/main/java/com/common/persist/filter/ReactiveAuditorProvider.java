@@ -8,7 +8,7 @@ import java.util.Optional;
 
 /**
 *  This get Current Auditor will resolve the annotations @CreatedBy and @LastModifiedBy.
- *  Using the authenticated user that will be caught through the authenticationRef 
+ *  Using the authenticated user that will be caught through the authenticationRef
 *
 *
 * */
