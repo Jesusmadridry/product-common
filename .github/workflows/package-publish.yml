@@ -44,7 +44,7 @@ jobs:
       uses: smartsquaregmbh/delete-old-packages@v0.8.0
       with:
         type: 'maven'
-        username: jesusmadridry@gmail.com
+        user: jesusmadridry@gmail.com
         keep: 10
         version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
         token: ${{ secrets.COMMON_GITHUB_TOKEN }}
