@@ -44,13 +44,13 @@ jobs:
       uses: smartsquaregmbh/delete-old-packages@v0.8.0
       with:
         type: 'maven'
-        user: jesusmadridry@gmail.com
+        user: jesusmadridry
         keep: 10
         version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
         token: ${{ secrets.COMMON_GITHUB_TOKEN }}
         names: |
-          product-common-api.product-common-persist
           product-common-api.product-common-exception
+          product-common-api.product-common-persist
 
     - uses: gradle/gradle-build-action@v2
       with:
