@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        //https://github.com/nebula-plugins/gradle-aggregate-javadocs-plugin
         classpath "com.netflix.nebula:gradle-aggregate-javadocs-plugin:${nebulaJavadocsPluginVersion}"
     }
 }
@@ -105,14 +106,23 @@ subprojects {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/jesusmadridry/product-common")
                 credentials {
-                    username = System.getenv("gpr_user_git")
-                    password = System.getenv("gpr_key_git")
+                    username = project.findProperty("gpr_user_git")
+                    password = project.findProperty("gpr_key_git")
                 }
             }
         }
         publications {
-            gpr(MavenPublication) {
+            mavenJava(MavenPublication) {
                 from(components.java)
+                artifact sourceJar
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
             }
         }
     }
