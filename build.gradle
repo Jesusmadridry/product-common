@@ -6,7 +6,6 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        //https://github.com/nebula-plugins/gradle-aggregate-javadocs-plugin
         classpath "com.netflix.nebula:gradle-aggregate-javadocs-plugin:${nebulaJavadocsPluginVersion}"
     }
 }

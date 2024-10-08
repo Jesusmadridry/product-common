@@ -25,6 +25,10 @@ jobs:
         distribution: corretto
         java-version: 17
 
+    - name: Defining Vars
+      with:
+
+
     - name: Retrieving App Version & Pattern
       uses: gradle/gradle-build-action@v2
       with:
@@ -38,16 +42,16 @@ jobs:
         echo "PROJECT_TAG=$(cat version.txt)" >> "$GITHUB_ENV"
         echo "App version = $(cat version.txt)"
 
-    - name: Removing Previous Packages
-      uses: smartsquaregmbh/delete-old-packages@v0.8.0
-      with:
-        type: 'maven'
-        keep: 10
-        version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
-        token: ${{ secrets.COMMON_GITHUB_TOKEN }}
-        names: |
-          product-common-api.product-common-persist
-          product-common-api.product-common-exception
+#    - name: Removing Previous Packages
+#      uses: smartsquaregmbh/delete-old-packages@v0.8.0
+#      with:
+#        type: 'maven'
+#        keep: 10
+#        version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
+#        token: ${{ secrets.COMMON_GITHUB_TOKEN }}
+#        names: |
+#          product-common-api.product-common-persist
+#          product-common-api.product-common-exception
 
     - uses: gradle/gradle-build-action@v2
       with:
