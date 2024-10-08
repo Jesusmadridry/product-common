@@ -64,21 +64,6 @@ jobs:
         echo "GITHUB_USERNAME: $GITHUB_USERNAME"
         echo "GITHUB_TOKEN: $GITHUB_TOKEN"
 
-    - name: Store Build Failure Reports
-      if: failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: reports
-        path: |
-          **/build/reports/
-          **/build/test-results/
-
-    - name: Store Last Coverage Reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: last-coverage
-        path: |
-          **/build/jacocoHtml/
 
     - name: Tagging Release and documentation
       id: tag-release
