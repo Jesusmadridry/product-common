@@ -1,0 +1,51 @@
+import org.gradle.internal.jvm.Jvm
+
+println "Using Gradle version: $gradle.gradleVersion"
+println "Compiling with: "+ Jvm.current()
+
+ext {
+    jarNumber = '1.0.0'  // task_01-Product-Common-Packages
+    dependencyKey = "$projectKey$jarType"
+    jarVersion = "$jarNumber$dependencyKey"
+
+    //Dependencies numbers
+    springBootVersion = '3.2.1'
+    springDependencyManagementVersion = '1.1.4'
+    logbackSMTPAngusVersion = '2.0.1'
+
+    buckect4JVersion = '0.10.3'
+    mapstructVersion = '1.5.5.Final'
+    lombokMapstructVersion = '0.2.0'
+
+    //Optional dependencies
+    springOpenAPIVersion = '2.3.0'
+
+     //Testing
+    mockitoVersion = '4.11.0'
+    mockWebserverVersion = '4.10.0'
+    jacksonVersion = '2.17.2'
+
+    //Build
+    nebulaJavadocsPluginVersion = '3.0.1'
+}
+
+println "=========== Artifact's versions ====================="
+println "jarVersion = $jarVersion"
+
+println "=========== Library's versions ====================="
+
+println "=========== Third party library's versions ============="
+println "springBootVersion = $springBootVersion"
+println "mapstructVersion = $mapstructVersion"
+println "lombokMapstructVersion = $lombokMapstructVersion"
+
+println "=========== Testing library's versions ============="
+println "mockitoVersion = $mockitoVersion"
+println "mockWebserverVersion = $mockWebserverVersion"
+
+println "=========== Optional library's versions ============="
+println "springOpenAPIVersion = $springOpenAPIVersion"
+println "jacksonVersion = $jacksonVersion"
+
+println "=========== Build library's versions ============="
+println "nebulaJavadocsPluginVersion = $nebulaJavadocsPluginVersion"

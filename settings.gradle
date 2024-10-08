@@ -1,0 +1,3 @@
+rootProject.name = 'product-common'
+include 'product-common-persist'
+include 'product-common-exception'
