@@ -86,8 +86,8 @@ jobs:
       id: verbose-env
       run: |
         env
-        echo "GITHUB_USERNAME: $GITHUB_USERNAME"
-        echo "GITHUB_TOKEN: $GITHUB_TOKEN"
+        echo "GITHUB_USERNAME: ${{ secrets.COMMON_GITHUB_USERNAME }}"
+        echo "GITHUB_TOKEN: ${{ secrets.COMMON_GITHUB_TOKEN }}"
 
     - name: Store Build Failure Reports
       if: failure()
@@ -125,7 +125,7 @@ jobs:
         
         # Push Tag to GIT
         git config --global user.name $GITHUB_ACTOR
-        git config --global user.email "admin@mycommunity.homes"
+        git config --global user.email "jesusmadridry@gmail.com"
         git tag $GIT_TAG -am "$PROJECT_TAG : $MESSAGE_TAG - ACTOR: $GITHUB_ACTOR"
         git push origin --tags
         
