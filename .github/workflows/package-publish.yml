@@ -94,11 +94,3 @@ jobs:
         
         # Update release documentation
         NEW_ROW="| [$VERSION]($HASH_URL) | $HASH | $DEPLOY_DATE | [$BRANCH_NAME]($JIRA_URL) | $DEV | $GITHUB_ACTOR |"
-        
-        # echo "$NEW_ROW" >> releases.md
-        sed -i -u '5i'"$NEW_ROW" releases.md
-        
-        git add releases.md
-        git add coverage-limit.properties
-        git commit -m "Update Releases Document and Coverage Metrics"
-        git push
