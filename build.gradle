@@ -110,6 +110,14 @@ subprojects {
                     password = System.getenv("gpr_key_git")
                 }
             }
+            publications {
+                register("jar", MavenPublication) {
+                    from(components["java"])
+                    pom {
+                        url.set("https://github.com/jesusmadridry/product-common.git")
+                    }
+                }
+            }
         }
     }
     task scapedVersionTxt()  {
