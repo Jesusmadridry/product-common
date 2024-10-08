@@ -37,7 +37,7 @@ permissions:
 
 env:
   ORG_GRADLE_PROJECT_jarType: ""
-  ORG_GRADLE_PROJECT_gpr_user: ${{ secrets.COMMON_GITHUB_USERNAME }}
+  ORG_GRADLE_PROJECT_gpr_user: jesusmadridry@gmail.com
   ORG_GRADLE_PROJECT_gpr_key: ${{ secrets.COMMON_GITHUB_TOKEN }}
 
 jobs:
@@ -72,7 +72,7 @@ jobs:
         type: 'maven'
         keep: 10
         version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
-        token: ${{ secrets.COMMON_GITHUB_TOKEN }}
+        token: ${{ env.ORG_GRADLE_PROJECT_gpr_key }}
         names: |
           product-common-api.product-common-persist
           product-common-api.product-common-exception
@@ -86,8 +86,8 @@ jobs:
       id: verbose-env
       run: |
         env
-        echo "GITHUB_USERNAME: ${{ secrets.COMMON_GITHUB_USERNAME }}"
-        echo "GITHUB_TOKEN: ${{ secrets.COMMON_GITHUB_TOKEN }}"
+        echo "GITHUB_USERNAME: ${{ env.ORG_GRADLE_PROJECT_gpr_key }}"
+        echo "GITHUB_TOKEN: ${{ env.ORG_GRADLE_PROJECT_gpr_token }}"
 
     - name: Store Build Failure Reports
       if: failure()
@@ -120,7 +120,6 @@ jobs:
 
         BRANCH_NAME=$(git log --pretty=format:"%s" -1)
         JIRA_TASK=${BRANCH_NAME:4:5}
-        JIRA_URL=https://mchomes.atlassian.net/browse/ENG-$JIRA_TASK
         DEV=$(git log --pretty=format:"%an" -1)
         
         # Push Tag to GIT
