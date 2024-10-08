@@ -4,7 +4,7 @@ println "Using Gradle version: $gradle.gradleVersion"
 println "Compiling with: "+ Jvm.current()
 
 ext {
-    jarNumber = '1.0.0'  // task_01-Product-Common-Packages
+    jarNumber = '1.0.1'  // task_02-HotFix: Include Auditor Listener to the Common Entity
     dependencyKey = "$projectKey$jarType"
     jarVersion = "$jarNumber$dependencyKey"
 
