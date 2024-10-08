@@ -6,6 +6,12 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 
+/**
+*  This get Current Auditor will resolve the annotations @CreatedBy and @LastModifiedBy.
+ *  Using the authenticated user that will be caught through the authenticationRef 
+*
+*
+* */
 @Slf4j
 public class ReactiveAuditorProvider implements AuditorAware<String> {
     private final InheritableThreadLocal<Authentication> authenticationRef = new InheritableThreadLocal<>();
