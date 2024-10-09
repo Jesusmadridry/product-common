@@ -51,7 +51,7 @@ jobs:
         type: 'maven'
         user: 'jesusmadridry'
         keep: 5
-        version-pattern: "1.0.2-SNAPSHOT"
+        version-pattern: "^.*-SNAPSHOT$"
         token: ${{ secrets.REMOVE_PACKAGES }}
         names: |
           product-common-api.product-common-exception
