@@ -49,7 +49,7 @@ jobs:
       uses: smartsquaregmbh/delete-old-packages@v0.8.0
       with:
         type: 'maven'
-        user: 'Jesusmadridry'
+        organization: 'jesusmadridry'
         keep: 5
         version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
         token: ${{ secrets.REMOVE_PACKAGES }}
