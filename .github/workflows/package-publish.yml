@@ -51,6 +51,13 @@ jobs:
         echo "PROJECT_TAG=$(cat version.txt)" >> "$GITHUB_ENV"
         echo "App version = $(cat version.txt)"
 
+    - name: List Available Versions
+      run: |
+        echo "Available versions for product-common-api.product-common-exception:"
+        mvn dependency:list -DincludeArtifactIds=product-common-api.product-common-exception
+        echo "Available versions for product-common-api.product-common-persist:"
+        mvn dependency:list -DincludeArtifactIds=product-common-api.product-common-persist
+
     - name: Removing Previous Packages
       if: success() # Ensures this only runs if previous steps succeed
       uses: smartsquaregmbh/delete-old-packages@v0.8.0
