@@ -4,7 +4,7 @@ println "Using Gradle version: $gradle.gradleVersion"
 println "Compiling with: "+ Jvm.current()
 
 ext {
-    jarNumber = '1.0.1'  // task_02-HotFix: Include Auditor Listener to the Common Entity
+    jarNumber = '1.0.1.1'  // task_03-Listing-available-packages: Before deleting the packages while the git actions are running. It must be shown.
     dependencyKey = "$projectKey$jarType"
     jarVersion = "$jarNumber$dependencyKey"
 
