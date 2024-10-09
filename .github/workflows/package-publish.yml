@@ -18,6 +18,14 @@ env:
   GITHUB_TOKEN: ${{ secrets.COMMON_GITHUB_TOKEN }}
 
 jobs:
+  list-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List Packages
+        run: |
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/Jesusmadridry/product-common/packages
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -43,19 +51,12 @@ jobs:
         echo "PROJECT_TAG=$(cat version.txt)" >> "$GITHUB_ENV"
         echo "App version = $(cat version.txt)"
 
-    - name: List Available Versions
-      run: |
-        echo "Available versions for product-common-api.product-common-exception:"
-        mvn dependency:list -DincludeArtifactIds=product-common-api.product-common-exception
-        echo "Available versions for product-common-api.product-common-persist:"
-        mvn dependency:list -DincludeArtifactIds=product-common-api.product-common-persist
-
     - name: Removing Previous Packages
       if: success() # Ensures this only runs if previous steps succeed
       uses: smartsquaregmbh/delete-old-packages@v0.8.0
       with:
         type: 'maven'
-        user: jesusmadridry
+        user: Jesusmadridry
         keep: 10
         version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
         token: ${{ secrets.COMMON_GITHUB_TOKEN }}
