@@ -49,13 +49,14 @@ jobs:
       uses: smartsquaregmbh/delete-old-packages@v0.8.0
       with:
         type: 'maven'
-        user: Jesusmadridry
+        user: 'jesusmadridry'
         keep: 5
-        version-pattern: "^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
+        version-pattern: "^${{ env.VERSION_PATTERN }}$|^${{ env.VERSION_PATTERN }}-SNAPSHOT$"
         token: ${{ secrets.REMOVE_PACKAGES }}
         names: |
-          product-common-api.product-common-exception
           product-common-api.product-common-persist
+          product-common-api.product-common-exception
+          
 
     - uses: gradle/gradle-build-action@v2
       with:
